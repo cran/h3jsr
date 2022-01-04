@@ -7,6 +7,10 @@ status](https://github.com/obrl-soil/h3jsr/workflows/R-CMD-check/badge.svg)](htt
 status](https://github.com/obrl-soil/h3jsr/workflows/test-coverage/badge.svg)](https://github.com/obrl-soil/h3jsr/actions)
 [![R build
 status](https://github.com/obrl-soil/h3jsr/workflows/pkgdown/badge.svg)](https://github.com/obrl-soil/h3jsr/actions)
+[![Coverage
+status](https://codecov.io/gh/obrl-soil/h3jsr/branch/master/graph/badge.svg)](https://codecov.io/github/obrl-soil/h3jsr?branch=master)
+[![CRAN](https://www.r-pkg.org/badges/version/h3jsr)](https://cran.r-project.org/package=h3jsr)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/h3jsr)](https://www.r-pkg.org/pkg/h3jsr)
 
 # h3jsr
 
@@ -20,7 +24,11 @@ here](https://h3geo.org/docs/).
 
 ## Installation
 
-Install from github with
+2021-07-07 This package is temporarily off-CRAN, until I can get it to
+build on Solaris. In the meantime, grab the release file for v1.2.2 if
+you need the version that was on CRAN, or install from github per below.
+
+Install the development version from GitHub with
 
 ``` r
 remotes::install_github("obrl-soil/h3jsr")
@@ -31,7 +39,7 @@ remotes::install_github("obrl-soil/h3jsr")
 ``` r
 library(h3jsr)
 library(sf)
-#> Linking to GEOS 3.9.0, GDAL 3.2.1, PROJ 7.2.1
+#> Linking to GEOS 3.9.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE
 
 # where is the Brisbane Town Hall at resolution 15?
 bth <- st_sfc(st_point(c(153.023503, -27.468920)), crs = 4326)

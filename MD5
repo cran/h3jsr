@@ -1,7 +1,7 @@
-f8f5b5d94b1f2618e7619101ae6f6ab3 *DESCRIPTION
+127fb28cfd20f43a8cb13b57706515a0 *DESCRIPTION
 4fdcf317e757c08ac50d5c8239936d67 *LICENSE.note
 1c73e6f69b878d5dc37b512305418bd4 *NAMESPACE
-2f064f3852ca00813d04efe6de93e950 *NEWS.md
+5a5bb158dcf0c0adf65a6e2131f4bb38 *NEWS.md
 7434371c3adb8fef8cff115e4c333dc6 *R/core_api.R
 4adbf7250efd8004919f694a9e72d86e *R/custom_fuctions.R
 3c5ecbf371bbba30df13ffd2d9545521 *R/data.R
@@ -12,12 +12,12 @@ bedb3b809f7255fc1953734cac343021 *R/helpers.R
 7fc887411d2ca3872050f745237fa973 *R/local_coordinates.R
 d41e389d05ed2ab0bbcab488054ece4a *R/onLoad.R
 a33d20adcb5ec5a805965d475c10108e *R/unidirectional_edges.R
-9b7a8e00f67d04e1482e86881ad329db *README.md
-852907703f4c97dd979c714bf625fb94 *build/vignette.rds
+0ff69e491131d26fe9bb6ec9e4ac474a *README.md
+f0b2de9f7f6c1496b401cd5b297a3a1d *build/vignette.rds
 2a43b539ed417ab69a1e36d0efac078f *data/h3_info_table.rda
 825d4e2fa10b1b7f83cf4b9f9bc84647 *inst/doc/intro-to-h3jsr.R
 7210becba2b28c302bbf279f7ab42434 *inst/doc/intro-to-h3jsr.Rmd
-9c6556b82f3900b560d2701deba9a423 *inst/doc/intro-to-h3jsr.html
+f730113874fa9b7e11e91326aa4e446c *inst/doc/intro-to-h3jsr.html
 45748a543080facd2cbe14fbc54318e3 *inst/js/LICENSE.md
 0a280792dde7f71768c633b980a4b664 *inst/js/h3-js.umd.js
 48b7d3c3e04213d4663b1e8352813f99 *man/are_neighbours.Rd
