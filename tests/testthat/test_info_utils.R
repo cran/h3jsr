@@ -1,14 +1,14 @@
 context('info utils')
 
 test_that(
-  'h3_res_area returns correctly',
+  'res_area returns correctly',
   c(
     expect_error(res_area(8, 'cubic furlongs')),
     expect_error(res_area(25, 'm2')),
-    expect_equal(res_area(14, 'm2'), 6.3),
-    expect_equal(res_area(7, 'km2'), 5.1612932),
-    expect_equal(res_area(14, 'm2', fast = FALSE)$area, 6.3),
-    expect_equal(res_area(7, 'km2', fast = FALSE)$area, 5.1612932)
+    expect_equal(res_area(14, 'm2'), 6.26718113532432230528),
+    expect_equal(res_area(7, 'km2'), 5.161293359717190831759),
+    expect_equal(res_area(14, 'm2', fast = FALSE)$area, 6.26718113532432230528),
+    expect_equal(res_area(7, 'km2', fast = FALSE)$area, 5.161293359717190831759)
   )
 )
 
@@ -17,10 +17,10 @@ test_that(
   c(
     expect_error(res_length(8, 'cubic furlongs')),
     expect_error(res_length(25, 'm')),
-    expect_equal(res_length(14, 'm'), 1.348574562),
-    expect_equal(res_length(7, 'km'), 1.220629759),
-    expect_equal(res_length(14, 'm', fast = FALSE)$edgelen, 1.348574562),
-    expect_equal(res_length(7, 'km', fast = FALSE)$edgelen, 1.220629759)
+    expect_equal(res_length(14, 'm'), 1.348574562000000032214),
+    expect_equal(res_length(7, 'km'), 1.220629758999999925351),
+    expect_equal(res_length(14, 'm', fast = FALSE)$edgelen, 1.348574562000000032214),
+    expect_equal(res_length(7, 'km', fast = FALSE)$edgelen, 1.220629758999999925351)
   )
 )
 
@@ -29,22 +29,22 @@ test_that(
   c(
     expect_error(res_cendist(8, 'cubic furlongs')),
     expect_error(res_cendist(25, 'm')),
-    expect_equal(res_cendist(14, 'm'), 2.33579966),
-    expect_equal(res_cendist(7, 'km'), 2.11419276),
-    expect_equal(res_cendist(14, 'm', fast = FALSE), 2.33579966),
-    expect_equal(res_cendist(7, 'km', fast = FALSE), 2.11419276)
+    expect_equal(res_cendist(14, 'm'), 2.335799659178945386628),
+    expect_equal(res_cendist(7, 'km'), 2.114192759818553923878),
+    expect_equal(res_cendist(14, 'm', fast = FALSE)$cendist, 2.335799659178945386628),
+    expect_equal(res_cendist(7, 'km', fast = FALSE)$cendist, 2.114192759818553923878)
   )
 )
 
 test_that(
-  'h3_count returns correctly',
+  'num_cells returns correctly',
   c(
-    expect_error(res_count(25)),
-    expect_equal(res_count(14), 81386768741882),
-    expect_equal(res_count(3), 41162),
-    expect_equal(res_count(14, fast = FALSE)$total_unique_indexes,
+    expect_error(num_cells(25)),
+    expect_equal(num_cells(14), 81386768741882),
+    expect_equal(num_cells(3), 41162),
+    expect_equal(num_cells(14, fast = FALSE)$total_unique_indexes,
                  81386768741882),
-    expect_equal(res_count(3, fast = FALSE)$total_unique_indexes, 41162)
+    expect_equal(num_cells(3, fast = FALSE)$total_unique_indexes, 41162)
   )
 )
 
@@ -92,12 +92,12 @@ test_that(
 test_that(
   'edge_length performs as expected',
   c(
-    val1 <- edge_length(h3_address = '166be8d12fffffff'),
-    val2 <- edge_length(h3_address = '166be8d12fffffff', simple = FALSE),
-    val3 <- edge_length(h3_address = '166be8d12fffffff', units = 'km'),
-    val4 <- edge_length(h3_address = '166be8d12fffffff', simple = FALSE, units = 'km'),
-    val5 <- edge_length(h3_address = '166be8d12fffffff', units = 'rads'),
-    val6 <- edge_length(h3_address = '166be8d12fffffff', simple = FALSE, units = 'rads'),
+    val1 <- edge_length(h3_edge = '166be8d12fffffff'),
+    val2 <- edge_length(h3_edge = '166be8d12fffffff', simple = FALSE),
+    val3 <- edge_length(h3_edge = '166be8d12fffffff', units = 'km'),
+    val4 <- edge_length(h3_edge = '166be8d12fffffff', simple = FALSE, units = 'km'),
+    val5 <- edge_length(h3_edge = '166be8d12fffffff', units = 'rads'),
+    val6 <- edge_length(h3_edge = '166be8d12fffffff', simple = FALSE, units = 'rads'),
     expect_equal(val1, 4037.6871751936487),
     expect_equal(val1 / 1000, val3),
     expect_equal(val5 * 6371.007180918475, val3), # note hardcoded mean earth radius used here

@@ -2,7 +2,7 @@
 % Please edit documentation in R/info_utilities.R
 \name{res_length}
 \alias{res_length}
-\title{Get H3 cell edge length}
+\title{Get average cell edge length}
 \usage{
 res_length(res = NULL, units = c("m", "km"), fast = TRUE)
 }
@@ -10,10 +10,10 @@ res_length(res = NULL, units = c("m", "km"), fast = TRUE)
 \item{res}{Integer; Desired H3 resolution. See
 \url{https://h3geo.org/docs/core-library/restable/} for allowable values and related dimensions.}
 
-\item{units}{Length unit to report in, either meters or kilometers.}
+\item{units}{Length unit to report in. Options are meters or kilometers.}
 
-\item{fast}{Logical; whether to retieve values from a locally stored table or
-reclaculate from source.}
+\item{fast}{Logical; whether to retrieve values from a locally stored table
+or recalculate from source.}
 }
 \value{
 Numeric; H3 cell edge length

@@ -21,7 +21,7 @@ options(stringsAsFactors = FALSE)
 bth <- sf::st_sfc(sf::st_point(c(153.023503, -27.468920)), crs = 4326)
 
 # where is the Brisbane Town Hall at resolution 15?
-point_to_h3(bth, res = 15)
+point_to_cell(bth, res = 15)
 
 ## ----'c2'---------------------------------------------------------------------
 nc <- st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
@@ -30,13 +30,13 @@ nc_pts <- st_transform(nc_pts, crs = 4326)
 nc_pts <- dplyr::select(nc_pts, CNTY_ID, NAME)
 
 # Give me the address for the center of each NC county at every resolution
-nc_all_res <- point_to_h3(nc_pts, res = seq(0, 15), simple = FALSE)
+nc_all_res <- point_to_cell(nc_pts, res = seq(0, 15), simple = FALSE)
 head(nc_all_res[, c(1:5)])
 
 ## ----'c4'---------------------------------------------------------------------
 # plot a few
 ashe_hexes <- unlist(nc_all_res[1, c(6,7,8,9,10)], use.names = FALSE)
-ashe_hexes <- h3_to_polygon(ashe_hexes, simple = FALSE)
+ashe_hexes <- cell_to_polygon(ashe_hexes, simple = FALSE)
 ggplot(nc[1,]) +
   geom_sf(fill = NA, colour = 'black') +
   geom_sf(data = ashe_hexes, aes(fill = h3_address), alpha = 0.5) +
@@ -56,7 +56,7 @@ is_pentagon(h3_address = '8abe8d12acaffff')
 get_pentagons(res = 8)
 
 ggplot() +
-  geom_sf(data = h3_to_polygon(get_pentagons(8)[[1]][1]), fill = NA) +
+  geom_sf(data = cell_to_polygon(get_pentagons(8)[[1]][1]), fill = NA) +
   theme_void()
 
 ## ----'isrc3'------------------------------------------------------------------
@@ -78,8 +78,8 @@ get_parent(h3_address = '8abe8d12acaffff', res = 6)
 get_children(h3_address = '86be8d12fffffff', res = 7)
 
 ggplot() +
-  geom_sf(data = h3_to_polygon('86be8d12fffffff'), fill = NA) +
-  geom_sf(data = h3_to_polygon(get_children(h3_address = '86be8d12fffffff',
+  geom_sf(data = cell_to_polygon('86be8d12fffffff'), fill = NA) +
+  geom_sf(data = cell_to_polygon(get_children(h3_address = '86be8d12fffffff',
                                             res = 7)[[1]]),
           fill = 'red', alpha = 0.5 ) +
   theme_void()
@@ -89,28 +89,28 @@ ggplot() +
 get_centerchild(h3_address = '86be8d12fffffff', res = 7)
 
 ggplot() +
-  geom_sf(data = h3_to_polygon('86be8d12fffffff'), fill = NA) +
-  geom_sf(data = h3_to_polygon(get_centerchild('86be8d12fffffff', 7)),
+  geom_sf(data = cell_to_polygon('86be8d12fffffff'), fill = NA) +
+  geom_sf(data = cell_to_polygon(get_centerchild('86be8d12fffffff', 7)),
           fill = 'red') +
-  geom_sf(data = h3_to_polygon(get_centerchild('86be8d12fffffff', 8)),
+  geom_sf(data = cell_to_polygon(get_centerchild('86be8d12fffffff', 8)),
           fill = 'blue') +  
   theme_void()
 
-## ----'krings'-----------------------------------------------------------------
-get_kring(h3_address = '86be8d12fffffff', ring_size = 2)
+## ----'disks'------------------------------------------------------------------
+get_disk(h3_address = '86be8d12fffffff', ring_size = 2)
 
-get_kring_list(h3_address = '86be8d12fffffff', ring_size = 2)
+get_disk_list(h3_address = '86be8d12fffffff', ring_size = 2)
 
 ## ----'ring'-------------------------------------------------------------------
 get_ring(h3_address = '86be8d12fffffff', ring_size = 2)
 
 ## ----'stmp', fig.height=3, fig.width=3----------------------------------------
-patch <- get_kring(h3_address = '86be8d12fffffff', ring_size = 2)
+disk <- get_disk(h3_address = '86be8d12fffffff', ring_size = 2)
 
-donut <- get_ring(h3_address = '86be8d12fffffff', ring_size = 5)
+ring <- get_ring(h3_address = '86be8d12fffffff', ring_size = 5)
 
-patch_sf <- set_to_multipolygon(patch, simple = FALSE)
-donut_sf <- set_to_multipolygon(donut, simple = FALSE)
+patch_sf <- cells_to_multipolygon(disk, simple = FALSE)
+donut_sf <- cells_to_multipolygon(ring, simple = FALSE)
 
 ggplot() +
   geom_sf(data = patch_sf, alpha = 0.5) +
@@ -119,25 +119,25 @@ ggplot() +
   theme_void()
 
 ## ----'coolplot', fig.height=3, fig.width=3------------------------------------
-patch_singles <- h3_to_polygon(unlist(patch, use.names = FALSE), simple = FALSE)
-donut_singles <- h3_to_polygon(unlist(donut, use.names = FALSE), simple = FALSE)
+disk_singles <- cell_to_polygon(unlist(disk, use.names = FALSE), simple = FALSE)
+ring_singles <- cell_to_polygon(unlist(ring, use.names = FALSE), simple = FALSE)
 
-ggplot(patch_singles) +
-  geom_sf(aes(fill = 1:nrow(patch_singles)), show.legend = FALSE) +
+ggplot(disk_singles) +
+  geom_sf(aes(fill = 1:nrow(disk_singles)), show.legend = FALSE) +
   scale_fill_viridis_c() +
   theme_minimal() +
   theme_void()
 
-ggplot(donut_singles) +
-  geom_sf(aes(fill = 1:nrow(donut_singles)), show.legend = FALSE) +
+ggplot(ring_singles) +
+  geom_sf(aes(fill = 1:nrow(ring_singles)), show.legend = FALSE) +
   scale_fill_viridis_c() +
   theme_minimal() +
   theme_void()
 
 ## ----'pf'---------------------------------------------------------------------
 ashe <- st_transform(nc[1, ], crs = 4326)
-ashe_7 <- polyfill(ashe, res = 7, simple = FALSE)
-ashe_7 <- h3_to_polygon(unlist(ashe_7$h3_polyfillers), simple = FALSE)
+ashe_7 <- polygon_to_cells(ashe, res = 7, simple = FALSE)
+ashe_7 <- cell_to_polygon(unlist(ashe_7$h3_addresses), simple = FALSE)
 
 ggplot() +
   geom_sf(data = ashe, fill = NA) +
@@ -148,7 +148,7 @@ ggplot() +
 
 ## ----'compact'----------------------------------------------------------------
 ashe_comp <- compact(ashe_7$h3_address)
-ashe_comp <- h3_to_polygon(ashe_comp, simple = FALSE)
+ashe_comp <- cell_to_polygon(ashe_comp, simple = FALSE)
 
 ggplot() +
   geom_sf(data = ashe, fill = NA) +
@@ -162,7 +162,7 @@ ggplot() +
 ashe_comp <- compact(ashe_7$h3_address)
 ashe_uncomp <- uncompact(ashe_comp, res = 8)
 
-ashe_uncomp <- h3_to_polygon(ashe_uncomp, simple = FALSE)
+ashe_uncomp <- cell_to_polygon(ashe_uncomp, simple = FALSE)
 
 ggplot() +
   geom_sf(data = ashe, fill = NA) +
@@ -179,11 +179,11 @@ are_neighbours(origin = '86be8d12fffffff', destination = '86be8d127ffffff')
 are_neighbours(origin = '86be8d12fffffff', destination = '86be8d147ffffff')
 
 ggplot() +
-  geom_sf(data = h3_to_polygon(c('86be8d12fffffff')),
+  geom_sf(data = cell_to_polygon(c('86be8d12fffffff')),
           fill = c('red'), alpha =  0.5) +
-  geom_sf(data = h3_to_polygon(c('86be8d127ffffff')),
+  geom_sf(data = cell_to_polygon(c('86be8d127ffffff')),
           fill = c('blue'), alpha =  0.5) +  
-    geom_sf(data = h3_to_polygon(c('86be8d147ffffff')),
+    geom_sf(data = cell_to_polygon(c('86be8d147ffffff')),
           fill = c('green'), alpha =  0.5) +  
   theme_void()
 
@@ -194,7 +194,7 @@ get_udedge(origin = '86be8d12fffffff', destination = '86be8d127ffffff')
 is_valid_edge('166be8d12fffffff')
 
 # not neighbours:
-get_udedge(origin = '86be8d12fffffff', destination = '86be8d147ffffff')
+#get_udedge(origin = '86be8d12fffffff', destination = '86be8d147ffffff')
 
 ## ----'udg2'-------------------------------------------------------------------
 get_udorigin(h3_edge = '166be8d12fffffff')
@@ -207,9 +207,23 @@ get_udends(h3_edge = '166be8d12fffffff')
 get_udedges(h3_address = '86be8d12fffffff')
 
 ggplot() +
-  geom_sf(data = h3_to_polygon('86be8d12fffffff'), col = NA) +
+  geom_sf(data = cell_to_polygon('86be8d12fffffff'), col = NA) +
   geom_sf(data = udedge_to_line(get_udedges(h3_address = '86be8d12fffffff')[[1]]),
           aes(col = seq(6)), size = 2, show.legend = FALSE) +
+  scale_color_viridis_c() +
+  theme_void()
+
+
+## -----------------------------------------------------------------------------
+vtx0 <- vertex_to_point(get_cell_vertex('86be8d12fffffff', 0), simple = FALSE)
+vtxs <- vertex_to_point(get_cell_vertexes('86be8d12fffffff')[[1]], simple = FALSE)
+poly <- cell_to_polygon('86be8d12fffffff', simple = FALSE)
+is_valid_vertex(get_cell_vertex('86be8d12fffffff', 0))
+
+ggplot() +
+  geom_sf(data = poly, col = NA) +
+  geom_sf(data = vtxs, aes(col = seq(6)), size = 3, show.legend = FALSE) +
+  geom_sf(data = vtx0, col = 'red', size = 5, pch = 1, show.legend = FALSE) +
   scale_color_viridis_c() +
   theme_void()
 
@@ -218,12 +232,12 @@ ggplot() +
 local <- get_local_ij(origin = '86be8d12fffffff', 
                       destination = '86be8d127ffffff')
 
-get_local_h3(origin = '86be8d12fffffff', i = local[, 1], j = local[, 2])
+get_local_cell(origin = '86be8d12fffffff', i = local[, 1], j = local[, 2])
 
 
 ## ----'gdist'------------------------------------------------------------------
 nc_pts <- sf::st_centroid(nc[c(1, 2), ])
-nc_6 <- point_to_h3(nc_pts, res = 6)
+nc_6 <- point_to_cell(nc_pts, res = 6)
 # how far apart are these two addresses?
 grid_distance(nc_6[1], nc_6[2])
 
@@ -232,13 +246,13 @@ path <- grid_path(nc_6[1], nc_6[2], simple = TRUE)
 path
 
 ## ----'h3l'--------------------------------------------------------------------
-state_line <- h3_to_line(path)
+state_line <- cell_to_line(path)
 
 ggplot() +
   geom_sf(data = nc[c(1,2), ], fill = NA) +
   geom_sf(data = sf::st_centroid(nc[c(1,2), ]), pch = 19, size = 2) +
-  geom_sf(data = h3_to_point(nc_6), pch = 19, size = 2, col = 'red') +
-  geom_sf(data = h3_to_polygon(nc_6), fill = NA) +
+  geom_sf(data = cell_to_point(nc_6), pch = 19, size = 2, col = 'red') +
+  geom_sf(data = cell_to_polygon(nc_6), fill = NA) +
   geom_sf(data = state_line, fill = NA, colour = 'red') +
   theme_minimal() +
   ggtitle('Counties Ashe and Alleghany, NC', subtitle = 'Line connecting hexagons containing centroids at resolution 6') +
@@ -252,7 +266,7 @@ res_length(6, 'km')
 
 res_cendist(6, 'km')
 
-res_count(6)
+num_cells(6)
 
 data("h3_info_table")
 str(h3_info_table)
@@ -260,7 +274,22 @@ str(h3_info_table)
 ## ----'info2'------------------------------------------------------------------
 cell_area(h3_address = '8abe8d12acaffff', 'km2')
 
-edge_length(h3_address = '166be8d12fffffff', 'km')
+edge_length(h3_edge = '166be8d12fffffff', 'km')
+
+
+## -----------------------------------------------------------------------------
+x <- cell_to_splitlong(h3_address = '8abe8d12acaffff')
+
+y <- splitlong_to_cell(split_lower = x[[1]][1], split_upper = x[[1]][2])
+
+x
+y
+
+
+## -----------------------------------------------------------------------------
+degs_to_rads(120)
+
+rads_to_degs(1.5)
 
 
 ## -----------------------------------------------------------------------------

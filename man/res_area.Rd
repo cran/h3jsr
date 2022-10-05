@@ -2,7 +2,7 @@
 % Please edit documentation in R/info_utilities.R
 \name{res_area}
 \alias{res_area}
-\title{Get H3 cell area}
+\title{Get average cell area}
 \usage{
 res_area(res = NULL, units = c("m2", "km2"), fast = TRUE)
 }
@@ -10,7 +10,7 @@ res_area(res = NULL, units = c("m2", "km2"), fast = TRUE)
 \item{res}{Integer; Desired H3 resolution. See
 \url{https://h3geo.org/docs/core-library/restable/} for allowable values and related dimensions.}
 
-\item{units}{Areal unit to report in, either square meters or square
+\item{units}{Areal unit to report in. Options are square meters or square
 kilometers.}
 
 \item{fast}{Logical; whether to retrieve values from a locally stored table or

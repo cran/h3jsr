@@ -2,7 +2,7 @@
 % Please edit documentation in R/h3_algorithms.R
 \name{get_ring}
 \alias{get_ring}
-\title{Get a donut of H3 cell indexes}
+\title{Get a ring of H3 cell indexes}
 \usage{
 get_ring(h3_address = NULL, ring_size = 1, simple = TRUE)
 }
@@ -16,9 +16,9 @@ Defaults to 1.}
 containing both inputs and outputs.}
 }
 \value{
-By default, a list of length(h3_address). Each list element contains
-  a character vector of H3 cells belonging to that step away from the
-  input address.
+By default, a list of \code{length(h3_address)}. Each list element
+  contains a character vector of H3 cells belonging to that step away from
+  the input address.
 }
 \description{
 This function returns all the H3 cell indexes at the specified step from the
@@ -26,7 +26,8 @@ address supplied.
 }
 \note{
 In total, the number of cells returned for each input index is
-  `ring_size \* 6`.
+  \code{ring_size * 6}. This function will throw an error if there is a
+  pentagon anywhere in the ring.
 }
 \examples{
 # What are the neighbours of this cell at step 2?

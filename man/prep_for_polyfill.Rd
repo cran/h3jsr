@@ -5,7 +5,7 @@
 \alias{prep_for_polyfill.sf}
 \alias{prep_for_polyfill.sfc}
 \alias{prep_for_polyfill.sfg}
-\title{Prepare geometry for polyfill}
+\title{Prepare geometry for polygon_to_cells}
 \usage{
 prep_for_polyfill(polys = NULL)
 
@@ -16,13 +16,13 @@ prep_for_polyfill(polys = NULL)
 \method{prep_for_polyfill}{sfg}(polys = NULL)
 }
 \arguments{
-\item{polys}{`sf`, `sfc` or `sfg` POLYGON/MULTIPOLYGON object.}
+\item{polys}{\code{sf}, \code{sfc} or \code{sfg} POLYGON/MULTIPOLYGON object.}
 }
 \value{
 `geojson` representation of supplied geometry.
 }
 \description{
 Converts a variety of possible input geometries to geojson for
-\code{\link[h3jsr:polyfill]{h3jsr::polyfill()}}.
+\code{\link[h3jsr:polygon_to_cells]{h3jsr::polygon_to_cells()}}.
 }
 \keyword{internal}

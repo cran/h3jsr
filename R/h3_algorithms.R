@@ -7,7 +7,7 @@
 #' \url{https://h3geo.org/docs/core-library/restable/} for allowable values and related dimensions.
 #' @param simple Logical; whether to return a vector of outputs or a data frame
 #'   containing both inputs and outputs.
-#' @return By default, a logical vector of length(h3_address).
+#' @return By default, a logical vector of \code{length(h3_address)}.
 #' @examples
 #' # What is the parent of this cell at resolution 6?
 #' get_parent(h3_address = '8abe8d12acaffff', res = 6)
@@ -32,9 +32,9 @@ get_parent <- function(h3_address = NULL, res = NULL, simple = TRUE) {
   # do the thing
   # for debug:
   # sesh$eval('console.log(JSON.stringify(evalThis[0]))')
-  # sesh$eval('console.log(JSON.stringify(h3.h3IsValid(evalThis[0].h3_address)));')
+  # sesh$eval('console.log(JSON.stringify(h3.cellToParent(evalThis[0].h3_parent)));')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].h3_parent = h3.h3ToParent(evalThis[i].h3_address, evalThis[i].h3_res);
+            evalThis[i].h3_parent = h3.cellToParent(evalThis[i].h3_address, evalThis[i].h3_res);
             };')
 
   # retrieve the result
@@ -51,10 +51,10 @@ get_parent <- function(h3_address = NULL, res = NULL, simple = TRUE) {
 #' This function returns the children of a particular H3 cell at the
 #' requested resolution.
 #' @inheritParams get_parent
-#' @return By default, a list of length(h3_address). Each list element contains
+#' @return By default, a list of \code{length(h3_address)}. Each list element contains
 #'   a vector of H3 cell indexes.
-#' @note The number of cells returned for each request is `7 ^ (parent_res -
-#'   child_res)`, so jumping three levels will return 343 indexes per request.
+#' @note The number of cells returned for each request is \code{7 ^ (parent_res -
+#'   child_res)}, so jumping three levels will return 343 indexes per request.
 #'   This can cause memory issues with larger requests.
 #' @examples
 #' # What are the children of this resolution 6 cell index at resolution 8?
@@ -76,9 +76,9 @@ get_children <- function(h3_address = NULL, res = NULL, simple = TRUE) {
 
   # for debug:
   # sesh$eval('console.log(JSON.stringify(evalThis[0]))')
-  # sesh$eval('console.log(JSON.stringify(h3.h3ToChildren(evalThis[0].h3_address, evalThis[0].res)));')
+  # sesh$eval('console.log(JSON.stringify(h3.cellToChildren(evalThis[0].h3_address, evalThis[0].res)));')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].h3_children = h3.h3ToChildren(evalThis[i].h3_address, evalThis[i].h3_res);
+            evalThis[i].h3_children = h3.cellToChildren(evalThis[i].h3_address, evalThis[i].h3_res);
             };')
   if(simple == TRUE) {
     sesh$get('evalThis')$h3_children
@@ -93,7 +93,7 @@ get_children <- function(h3_address = NULL, res = NULL, simple = TRUE) {
 #' This function returns the central child of a particular H3 cell index at the
 #' requested resolution.
 #' @inheritParams get_parent
-#' @return By default, a list of length(h3_address). Each list element contains
+#' @return By default, a list of \code{length(h3_address)}. Each list element contains
 #'   a vector of H3 cells.
 #' @examples
 #' # What is the central child of this resolution 6 index at resolution 8?
@@ -115,9 +115,9 @@ get_centerchild <- function(h3_address = NULL, res = NULL, simple = TRUE) {
 
   # for debug:
   # sesh$eval('console.log(JSON.stringify(evalThis[0]))')
-  # sesh$eval('console.log(JSON.stringify(h3.h3ToCenterChild(evalThis[0].h3_address, evalThis[0].res)));')
+  # sesh$eval('console.log(JSON.stringify(h3.cellToCenterChild(evalThis[0].h3_address, evalThis[0].res)));')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].h3_centerchild = h3.h3ToCenterChild(evalThis[i].h3_address, evalThis[i].h3_res);
+            evalThis[i].h3_centerchild = h3.cellToCenterChild(evalThis[i].h3_address, evalThis[i].h3_res);
             };')
   if(simple == TRUE) {
     sesh$get('evalThis')$h3_centerchild
@@ -136,22 +136,20 @@ get_centerchild <- function(h3_address = NULL, res = NULL, simple = TRUE) {
 #'   Defaults to 1.
 #' @param simple Logical; whether to return a vector of outputs or a data frame
 #'   containing both inputs and outputs.
-#' @return By default, a list of length(h3_address). Each list element contains
-#'   a character vector of H3 cells.
-#' @note While the parent function name `kring` may imply returning a donut of
-#'   cells, it actually returns a patch centered on the input. The number of
-#'   cells returned for each input index conforms to the
+#' @return By default, a list of \code{length(h3_address)}. Each list element
+#'   contains a character vector of H3 cells.
+#' @note The number of cells returned for each input index conforms to the
 #'   \href{https://en.wikipedia.org/wiki/Centered_hexagonal_number}{centered
-#'   hexagonal number sequence}, so at
-#'   `ring_size = 5`, 91 addresses are returned. The first address returned is
-#'   the input address, the rest follow in a spiral anticlockwise order.
+#'   hexagonal number sequence}, so at \code{ring_size = 5}, 91 addresses are
+#'   returned. The first address returned is the input address, the rest follow
+#'   in a spiral anticlockwise order.
 #' @examples
 #' # What are all the neighbours of this cell within two steps?
-#' get_kring(h3_address = '86be8d12fffffff', ring_size = 2)
+#' get_disk(h3_address = '86be8d12fffffff', ring_size = 2)
 #' @import V8
 #' @export
 #'
-get_kring <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
+get_disk <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 
   if(any(is_valid(h3_address)) == FALSE) {
     stop('Invalid H3 address detected.')
@@ -162,12 +160,12 @@ get_kring <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 
   # for debug:
   # sesh$eval('console.log(JSON.stringify(evalThis[0]))')
-  # sesh$eval('console.log(JSON.stringify(h3.kRing(evalThis[0].h3_address, evalThis[0].ring_size)));')
+  # sesh$eval('console.log(JSON.stringify(h3.gridDisk(evalThis[0].h3_address, evalThis[0].ring_size)));')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].h3_kring = h3.kRing(evalThis[i].h3_address, evalThis[i].ring_size);
+            evalThis[i].h3_disk = h3.gridDisk(evalThis[i].h3_address, evalThis[i].ring_size);
             };')
   if(simple == TRUE) {
-    sesh$get('evalThis')$h3_kring
+    sesh$get('evalThis')$h3_disk
   } else {
     sesh$get('evalThis')
   }
@@ -178,23 +176,23 @@ get_kring <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 #'
 #' This function returns all the H3 cell indexes within a specified number of steps
 #' from the address supplied, grouped by step.
-#' @inheritParams get_kring
-#' @return By default, a list of length(h3_address). Each list element contains
-#'   a list of `length(ring_size + 1)`. Each of those lists contains a character
-#'   vector of H3 cell indices belonging to that step away from the input cell.
+#' @inheritParams get_disk
+#' @return By default, a list of \code{length(h3_address)}. Each list element
+#'   contains a list of \code{length(ring_size + 1)}. Each of those lists
+#'   contains a character vector of H3 cell indices belonging to that step away
+#'   from the input cell.
 #' @note In total, the number of indices returned for each input cell conforms
 #'   to the
 #'   \href{https://en.wikipedia.org/wiki/Centered_hexagonal_number}{centered
-#'   hexagonal number sequence}, so at
-#'   `ring_size = 5`, 91 cells are returned. Cells are returned in
-#'   separate lists, one for each step.
+#'   hexagonal number sequence}, so at \code{ring_size = 5}, 91 cells are
+#'   returned. Cells are returned in separate lists, one for each step.
 #' @examples
 #' # What are the nested neighbours of this cell within two steps?
-#' get_kring_list(h3_address = '86be8d12fffffff', ring_size = 2)
+#' get_disk_list(h3_address = '86be8d12fffffff', ring_size = 2)
 #' @import V8
 #' @export
 #'
-get_kring_list <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
+get_disk_list <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 
   if(any(is_valid(h3_address)) == FALSE) {
     stop('Invalid H3 cell index detected.')
@@ -205,28 +203,29 @@ get_kring_list <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 
   # for debug:
   # sesh$eval('console.log(JSON.stringify(evalThis[0]))')
-  # sesh$eval('console.log(JSON.stringify(h3.kRingDistances(evalThis[0].h3_address, evalThis[0].ring_size)));')
+  # sesh$eval('console.log(JSON.stringify(h3.gridDiskDistances(evalThis[0].h3_address, evalThis[0].ring_size)));')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].h3_kringd = h3.kRingDistances(evalThis[i].h3_address, evalThis[i].ring_size);
+            evalThis[i].h3_disks = h3.gridDiskDistances(evalThis[i].h3_address, evalThis[i].ring_size);
             };')
   if(simple == TRUE) {
-    sesh$get('evalThis')$h3_kringd
+    sesh$get('evalThis')$h3_disks
   } else {
     sesh$get('evalThis')
   }
 
 }
 
-#' Get a donut of H3 cell indexes
+#' Get a ring of H3 cell indexes
 #'
 #' This function returns all the H3 cell indexes at the specified step from the
 #' address supplied.
-#' @inheritParams get_kring
-#' @return By default, a list of length(h3_address). Each list element contains
-#'   a character vector of H3 cells belonging to that step away from the
-#'   input address.
+#' @inheritParams get_disk
+#' @return By default, a list of \code{length(h3_address)}. Each list element
+#'   contains a character vector of H3 cells belonging to that step away from
+#'   the input address.
 #' @note In total, the number of cells returned for each input index is
-#'   `ring_size \* 6`.
+#'   \code{ring_size * 6}. This function will throw an error if there is a
+#'   pentagon anywhere in the ring.
 #' @examples
 #' # What are the neighbours of this cell at step 2?
 #' get_ring(h3_address = '86be8d12fffffff', ring_size = 2)
@@ -244,9 +243,9 @@ get_ring <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 
   # for debug:
   # sesh$eval('console.log(JSON.stringify(evalThis[0]))')
-  # sesh$eval('console.log(JSON.stringify(h3.hexRing(evalThis[0].h3_address, evalThis[0].ring_size)));')
+  # sesh$eval('console.log(JSON.stringify(h3.gridRingUnsafe(evalThis[0].h3_address, evalThis[0].ring_size)));')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].h3_ring = h3.hexRing(evalThis[i].h3_address, evalThis[i].ring_size);
+            evalThis[i].h3_ring = h3.gridRingUnsafe(evalThis[i].h3_address, evalThis[i].ring_size);
             };')
   if(simple == TRUE) {
     sesh$get('evalThis')$h3_ring
@@ -258,16 +257,17 @@ get_ring <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 
 #' Get H3 cell index within a polygon
 #'
-#' This function returns all the H3 cell index within the supplied polygon
+#' This function returns all the H3 cell indexes within the supplied polygon
 #' geometry.
-#' @param geometry `sf` object of type 'POLYGON' or 'MULTIPOLYGON'.
+#' @param geometry \code{sf} object of type \code{POLYGON} or
+#'   \code{MULTIPOLYGON}.
 #' @inheritParams get_parent
 #' @param simple Logical; whether to return a vector of outputs or an sf object
 #'   containing both inputs and outputs.
-#' @return By default, a list of length(h3_address). Each list element contains
-#'   a character vector of H3 cell indices belonging to that geometry. A result of
-#'   NA indicates that no H3 cell indices of the chosen resolution are centered
-#'   over the geometry.
+#' @return By default, a list of \code{length(h3_address)}. Each list element
+#'   contains a character vector of H3 cell indices belonging to that geometry.
+#'   A result of NA indicates that no H3 cell indices of the chosen resolution
+#'   are centered over the geometry.
 #' @note This function will be slow with a large number of polygons, and/or
 #'   polygons that are large relative to the hexagon area at the chosen
 #'   resolution. A message is printed to console where the total input area is
@@ -276,13 +276,13 @@ get_ring <- function(h3_address = NULL, ring_size = 1, simple = TRUE) {
 #' # Which level 5 H3 cell indices have centers inside County Ashe, NC?
 #' nc <- sf::st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
 #' nc1 <- nc[1, ]
-#' fillers <- polyfill(geometry = nc1, res = 5)
+#' fillers <- polygon_to_cells(geometry = nc1, res = 5)
 #' @import V8
 #' @importFrom sf st_area st_bbox st_as_sfc st_sf
 #' @importFrom utils data
 #' @export
 #'
-polyfill <- function(geometry = NULL, res = NULL, simple = TRUE) {
+polygon_to_cells <- function(geometry = NULL, res = NULL, simple = TRUE) {
 
   if(!any(res %in% seq(0, 15))) {
     stop('Please provide a valid H3 resolution. Allowable values are 0-15 inclusive.')
@@ -308,11 +308,11 @@ polyfill <- function(geometry = NULL, res = NULL, simple = TRUE) {
               var comp_h3a = [];
               if (evalThis.features[i].geometry.type == "MultiPolygon") {
                 for (var j = 0; j < evalThis.features[i].geometry.coordinates.length; j++) {
-                comp_h3a.push(h3.polyfill(evalThis.features[i].geometry.coordinates[j], res, true));
+                comp_h3a.push(h3.polygonToCells(evalThis.features[i].geometry.coordinates[j], res, true));
               }
               h3_addresses[i] = [].concat.apply([], comp_h3a)
               } else {
-                h3_addresses[i] = h3.polyfill(evalThis.features[i].geometry.coordinates, res, true);
+                h3_addresses[i] = h3.polygonToCells(evalThis.features[i].geometry.coordinates, res, true);
               }};')
 
   # consider writing to tmp when lge as retrieval can be slow
@@ -329,7 +329,7 @@ polyfill <- function(geometry = NULL, res = NULL, simple = TRUE) {
   if(simple == TRUE) {
     results
   } else {
-    geometry$h3_polyfillers <- results
+    geometry$h3_addresses <- results
     sf::st_sf(geometry)
   }
 }
@@ -337,33 +337,34 @@ polyfill <- function(geometry = NULL, res = NULL, simple = TRUE) {
 #' Get geometry for a set of H3 cells
 #'
 #' This function returns geometry associated with a set of H3 cells, as a
-#' single `sfc_MULTIPOLYGON`.
+#' single \code{sfc_MULTIPOLYGON}.
 #' @param h3_addresses Character vector or list of 15-character cell indices
 #'   generated by H3.
-#' @param simple Logical; whether to return an `sfc_MULTIPOLYGON` or an `sf`
-#'   object including the input cells.
-#' @return By default, object of type `sfc_MULTIPOLYGON` of length 1.
+#' @param simple Logical; whether to return an \code{sfc_MULTIPOLYGON} or an
+#'   \code{sf} object including the input cells.
+#' @return By default, object of type \code{sfc_MULTIPOLYGON} of length 1.
 #' @note The geometry returned by this function will not be valid where the
 #'   addresses supplied overlap at the same resolution. The main use case for
-#'   this function appears to be visualising the outputs of `polyfill()` and
-#'   `compact()`.
+#'   this function appears to be visualising the outputs of
+#'   \code{\link[h3jsr:polygon_to_cells]{polygon_to_cells}} and
+#'   \code{\link[h3jsr:compact]{compact}}.
 #' @examples \dontrun{
 #' # Give me the outline of the cells around Brisbane Town Hall at
 #' # resolution 10 (not run as slow-ish)
 #' bth <- sf::st_sfc(sf::st_point(c(153.023503, -27.468920)), crs = 4326)
 #' bth_10 <- point_to_h3(bth, res = 10)
-#' bth_patch <- get_kring(h3_address = bth_10, ring_size = 2)
-#' bth_patch_sf <- set_to_multipolygon(bth_patch)
+#' bth_patch <- get_disk(h3_address = bth_10, ring_size = 2)
+#' bth_patch_sf <- cells_to_multipolygon(bth_patch)
 #' }
 #' @import V8
 #' @importFrom sf st_is_valid st_sf
 #' @importFrom geojsonsf geojson_sf
 #' @export
 #'
-set_to_multipolygon <- function(h3_addresses = NULL, simple = TRUE) {
+cells_to_multipolygon <- function(h3_addresses = NULL, simple = TRUE) {
 
   # in case a list output from another function is supplied
-  # unique prevents Wierd Geometry from being created
+  # unique prevents Weird Geometry from being created
   h3_addresses <- unique(unlist(h3_addresses, use.names = FALSE))
 
   if(any(is_valid(h3_addresses)) == FALSE) {
@@ -377,7 +378,7 @@ set_to_multipolygon <- function(h3_addresses = NULL, simple = TRUE) {
     sesh$assign('evalThis', h3_addresses)
   }
   # sesh$eval('console.log(evalThis.length);')
-  sesh$eval('var geometry = h3.h3SetToMultiPolygon(evalThis, formatAsGeoJson = true);')
+  sesh$eval('var geometry = h3.cellsToMultiPolygon(evalThis, formatAsGeoJson = true);')
   # sesh$eval('console.log(JSON.stringify(geometry));')
   # Output still isn't proper geoJSON, just the .coordinates.
   sesh$eval('var geom_out = JSON.stringify({type: "MultiPolygon", coordinates: geometry});')
@@ -403,7 +404,7 @@ set_to_multipolygon <- function(h3_addresses = NULL, simple = TRUE) {
 #' cells across multiple resolutions that represents the same area.
 #' @param h3_addresses Character vector or list of 15-character indices
 #'   generated by H3 at a single resolution, generally the output of
-#'   \code{\link[h3jsr:polyfill]{polyfill}}.
+#'   \code{\link[h3jsr:polygon_to_cells]{polygon_to_cells}}.
 #' @param simple Logical; whether to return a vector of outputs or a list object
 #'   containing both inputs and outputs.
 #' @return A list of H3 cells with multiple resolutions. The minimum
@@ -413,7 +414,7 @@ set_to_multipolygon <- function(h3_addresses = NULL, simple = TRUE) {
 #' nc <- sf::st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
 #' nc1 <- nc[1, ]
 #' nc1 <- sf::st_cast(nc1, 'POLYGON')
-#' fillers <- polyfill(geometry = nc1, res = 6)
+#' fillers <- polygon_to_cells(geometry = nc1, res = 6)
 #' compacted <- compact(fillers)
 #' }
 #' @import V8
@@ -434,7 +435,7 @@ compact <- function(h3_addresses = NULL, simple = TRUE) {
     sesh$assign('evalThis', h3_addresses)
   }
   # sesh$eval('console.log(evalThis.length);')
-  sesh$eval('var comp = h3.compact(evalThis);')
+  sesh$eval('var comp = h3.compactCells(evalThis);')
   # sesh$eval('console.log(JSON.stringify(comp));')
 
   if(simple == TRUE) {
@@ -460,7 +461,7 @@ compact <- function(h3_addresses = NULL, simple = TRUE) {
 #' nc <- sf::st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
 #' nc1 <- nc[1, ]
 #' nc1 <- sf::st_cast(nc1, 'POLYGON')
-#' fillers <- polyfill(geometry = nc1, res = 6)
+#' fillers <- polygon_to_cells(geometry = nc1, res = 6)
 #' compacted <- compact(fillers)
 #' # uncompact to resolution 7
 #' uncompacted <- uncompact(compacted, res = 7)
@@ -488,7 +489,7 @@ uncompact <- function(h3_addresses = NULL, res = NULL, simple = TRUE) {
     sesh$assign('evalThis', h3_addresses)
   }
   # sesh$eval('console.log(evalThis.length);')
-  sesh$eval('var comp = h3.uncompact(evalThis, res);')
+  sesh$eval('var comp = h3.uncompactCells(evalThis, res);')
   # sesh$eval('console.log(JSON.stringify(comp));')
 
   if(simple == TRUE) {
@@ -518,7 +519,7 @@ uncompact <- function(h3_addresses = NULL, res = NULL, simple = TRUE) {
 #' @examples \dontrun{
 #' nc <- sf::st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
 #' nc_pts <- sf::st_centroid(nc[c(1, 2), ])
-#' nc_6 <- point_to_h3(nc_pts, res = 6)
+#' nc_6 <- point_to_cell(nc_pts, res = 6)
 #' # how far apart are these two addresses?
 #' grid_distance(nc_6[1], nc_6[2])
 #' }
@@ -547,7 +548,7 @@ grid_distance <- function(origin = NULL, destination = NULL, simple = TRUE) {
   # sesh$eval('console.log(evalThis.length);')
   # sesh$eval('console.log(evalThis[0]);')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].grid_distance = h3.h3Distance(evalThis[i].origin, evalThis[i].destination);
+            evalThis[i].grid_distance = h3.gridDistance(evalThis[i].origin, evalThis[i].destination);
             };')
   # sesh$eval('console.log(JSON.stringify(evalThis[0].grid_distance));')
 
@@ -573,17 +574,17 @@ grid_distance <- function(origin = NULL, destination = NULL, simple = TRUE) {
 #'   \item{Input H3 cells must be of the same resolution or results cannot
 #'   be computed. This function may fail to find the distance between two
 #'   indexes if they are very far apart or on opposite sides of a pentagon.}
-#'   \item{The specific output of this function should not be
-#'   considered stable across library versions. The only guarantees the library
-#'   provides are that the line length will be `h3_distance(start, end) + 1` and
-#'   that every index in the line will be a neighbor of the preceding index.}
+#'   \item{The specific output of this function should not be considered stable
+#'   across library versions. The only guarantees the library provides are that
+#'   the line length will be \code{h3_distance(start, end) + 1} and that every
+#'   index in the line will be a neighbor of the preceding index.}
 #'   \item{Lines are drawn in grid space, and may not correspond exactly to
 #'   either Cartesian lines or great arcs}
 #'   }
 #' @examples \dontrun{
 #' nc <- sf::st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
 #' nc_pts <- sf::st_centroid(nc[c(1, 2), ])
-#' nc_6 <- point_to_h3(nc_pts, res = 6)
+#' nc_6 <- point_to_cell(nc_pts, res = 6)
 #' # find a path between these two addresses:
 #' grid_path(nc_6[1], nc_6[2], simple = TRUE)
 #'
@@ -604,7 +605,7 @@ grid_path <- function(origin = NULL, destination = NULL, simple = TRUE) {
   h3_addresses <- c(origin, destination)
 
   if(any(is_valid(h3_addresses)) == FALSE) {
-    stop('Invalid H3 indices detected.')
+    stop('Invalid H3 addresses detected.')
   }
 
   # handle single pair supplied
@@ -613,7 +614,7 @@ grid_path <- function(origin = NULL, destination = NULL, simple = TRUE) {
   # sesh$eval('console.log(evalThis.length);')
   # sesh$eval('console.log(evalThis[0]);')
   sesh$eval('for (var i = 0; i < evalThis.length; i++) {
-            evalThis[i].grid_path = h3.h3Line(evalThis[i].origin, evalThis[i].destination);
+            evalThis[i].grid_path = h3.gridPathCells(evalThis[i].origin, evalThis[i].destination);
             };')
   # sesh$eval('console.log(JSON.stringify(evalThis[0].grid_path));')
 
